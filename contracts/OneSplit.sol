@@ -16,13 +16,13 @@ import "./OneSplitSmartToken.sol";
 contract OneSplitView is
     IOneSplitView,
     OneSplitBaseView,
-    OneSplitMultiPathView,
-    OneSplitChaiView,
-    OneSplitBdaiView,
-    OneSplitAaveView,
-    OneSplitFulcrumView,
-    OneSplitCompoundView,
-    OneSplitIearnView,
+    //OneSplitMultiPathView,
+    //OneSplitChaiView,
+    //OneSplitBdaiView,
+    //OneSplitAaveView,
+    //OneSplitFulcrumView,
+    //OneSplitCompoundView,
+    //OneSplitIearnView,
     OneSplitWethView,
     OneSplitSmartTokenView
 {
@@ -58,13 +58,13 @@ contract OneSplitView is
 contract OneSplit is
     IOneSplit,
     OneSplitBase,
-    OneSplitMultiPath,
-    OneSplitChai,
-    OneSplitBdai,
-    OneSplitAave,
-    OneSplitFulcrum,
-    OneSplitCompound,
-    OneSplitIearn,
+    //OneSplitMultiPath,
+    //OneSplitChai,
+    //OneSplitBdai,
+    //OneSplitAave,
+    //OneSplitFulcrum,
+    //OneSplitCompound,
+    //OneSplitIearn,
     OneSplitWeth,
     OneSplitSmartToken
 {
