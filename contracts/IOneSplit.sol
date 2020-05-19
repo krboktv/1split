@@ -62,6 +62,7 @@ contract IOneSplitConsts {
     uint256 public constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x200000000;
     uint256 public constant FLAG_DISABLE_CURVE_ZAP = 0x400000000;
     uint256 public constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x800000000;
+    uint256 public constant FLAG_DISABLE_TOKEN_SETS_POOL_TOKEN = 0x1000000000;
 }
 
 contract IOneSplit is IOneSplitConsts {
