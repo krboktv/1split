@@ -2,21 +2,31 @@ pragma solidity ^0.5.0;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-
 //
-//        ||
-//        ||
-//        \/
-// +--------------+
-// | OneSplitWrap |
-// +--------------+
-//        ||
-//        || (delegatecall)
-//        \/
-// +--------------+
-// |   OneSplit   |
-// +--------------+
-//
+//  [ msg.sender ]
+//       | |
+//       | |
+//       \_/
+// +---------------+ ________________________________
+// | OneSplitAudit | _______________________________  \
+// +---------------+                                 \ \
+//       | |                      ______________      | | (staticcall)
+//       | |                    /  ____________  \    | |
+//       | | (call)            / /              \ \   | |
+//       | |                  / /               | |   | |
+//       \_/                  | |               \_/   \_/
+// +--------------+           | |           +----------------------+
+// | OneSplitWrap |           | |           |   OneSplitViewWrap   |
+// +--------------+           | |           +----------------------+
+//       | |                  | |                     | |
+//       | | (delegatecall)   | | (staticcall)        | | (staticcall)
+//       \_/                  | |                     \_/
+// +--------------+           | |             +------------------+
+// |   OneSplit   |           | |             |   OneSplitView   |
+// +--------------+           | |             +------------------+
+//       | |                  / /
+//        \ \________________/ /
+//         \__________________/
 //
 
 
@@ -58,34 +68,64 @@ contract IOneSplitConsts {
     uint256 public constant FLAG_DISABLE_ALL_SPLIT_SOURCES = 0x20000000;
     uint256 public constant FLAG_DISABLE_ALL_WRAP_SOURCES = 0x40000000;
     uint256 public constant FLAG_DISABLE_CURVE_PAX = 0x80000000;
-    uint256 public constant FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x100000000;
-    uint256 public constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x200000000;
-    uint256 public constant FLAG_DISABLE_CURVE_ZAP = 0x400000000;
-    uint256 public constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x800000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_RENBTC = 0x100000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_TBTC = 0x200000000;
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_USDT = 0x400000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_WBTC = 0x800000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_TBTC = 0x1000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_RENBTC = 0x2000000000; // Turned off by default
+    uint256 internal constant FLAG_DISABLE_DFORCE_SWAP = 0x4000000000;
+    uint256 internal constant FLAG_DISABLE_SHELL = 0x8000000000;
+    uint256 internal constant FLAG_ENABLE_CHI_BURN = 0x10000000000;
+    uint256 internal constant FLAG_DISABLE_MSTABLE_MUSD = 0x20000000000;
+
+    uint256 public constant FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x40000000000;
+    uint256 public constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x80000000000;
+    uint256 public constant FLAG_DISABLE_CURVE_ZAP = 0x100000000000;
+    uint256 public constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x200000000000;
 }
 
 
 contract IOneSplit is IOneSplitConsts {
     function getExpectedReturn(
         IERC20 fromToken,
-        IERC20 toToken,
+        IERC20 destToken,
         uint256 amount,
         uint256 parts,
-        uint256 flags
+        uint256 flags // See constants in IOneSplit.sol
     )
-        public
-        view
-        returns(
-            uint256 returnAmount,
-            uint256[] memory distribution
-        );
+    public
+    view
+    returns(
+        uint256 returnAmount,
+        uint256[] memory distribution
+    );
+
+    function getExpectedReturnWithGas(
+        IERC20 fromToken,
+        IERC20 destToken,
+        uint256 amount,
+        uint256 parts,
+        uint256 flags, // See constants in IOneSplit.sol
+        uint256 destTokenEthPriceTimesGasPrice
+    )
+    public
+    view
+    returns(
+        uint256 returnAmount,
+        uint256 estimateGasAmount,
+        uint256[] memory distribution
+    );
 
     function swap(
         IERC20 fromToken,
-        IERC20 toToken,
+        IERC20 destToken,
         uint256 amount,
         uint256 minReturn,
         uint256[] memory distribution,
         uint256 flags
-    ) public payable;
+    )
+    public
+    payable
+    returns(uint256 returnAmount);
 }
