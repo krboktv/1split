@@ -16,7 +16,7 @@ interface ISmartTokenConverter {
 
     function liquidate(uint256 _amount) external;
 
-    function fund(uint256 _amount) external;
+    function fund(uint256 _amount) payable external;
 
     function convert2(IERC20 _fromToken, IERC20 _toToken, uint256 _amount, uint256 _minReturn, address _affiliateAccount, uint256 _affiliateFee) external returns (uint256);
 
