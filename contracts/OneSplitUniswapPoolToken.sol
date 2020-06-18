@@ -441,7 +441,7 @@ contract OneSplitUniswapPoolToken is OneSplitBaseWrap, OneSplitUniswapPoolTokenB
                 flags
             );
 
-            _infiniteApproveIfNeeded(uniswapToken, address(poolToken));
+            uniswapToken.universalApprove(address(poolToken), uint256(-1));
         }
 
         uint256 ethBalance = address(this).balance;

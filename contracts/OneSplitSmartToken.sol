@@ -443,7 +443,7 @@ contract OneSplitSmartToken is OneSplitBaseWrap, OneSplitSmartTokenBase {
                 minFundAmount = curFundAmount;
             }
 
-            _infiniteApproveIfNeeded(_canonicalSUSD(details.tokens[i].token), details.converter);
+            _canonicalSUSD(details.tokens[i].token).universalApprove(details.converter, uint256(-1));
         }
 
         ISmartTokenConverter(details.converter).fund.value(ethAmount)(minFundAmount);

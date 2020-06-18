@@ -395,7 +395,7 @@ contract OneSplitUniswapV2PoolToken is OneSplitBaseWrap, OneSplitUniswapV2PoolTo
         uint256[] memory distribution,
         uint256 flags
     ) private {
-        _infiniteApproveIfNeeded(poolToken, address(uniswapRouter));
+        poolToken.universalApprove(address(uniswapRouter), uint256(-1));
 
         IERC20 [2] memory tokens = [
             IUniswapV2Pair(address(poolToken)).token0(),
@@ -453,7 +453,7 @@ contract OneSplitUniswapV2PoolToken is OneSplitBaseWrap, OneSplitUniswapV2PoolTo
         uint256[] memory dist = new uint256[](distribution.length);
         for (uint i = 0; i < 2; i++) {
 
-            _infiniteApproveIfNeeded(tokens[i], address(uniswapRouter));
+            tokens[i].universalApprove(address(uniswapRouter), uint256(-1));
 
             if (fromToken == tokens[i]) {
                 continue;

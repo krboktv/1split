@@ -25,9 +25,9 @@ contract OneSplitBalancerPoolTokenBase {
     }
 
     function _getPoolDetails(IBPool poolToken)
-        internal
-        view
-        returns(PoolTokenDetails memory details)
+    internal
+    view
+    returns(PoolTokenDetails memory details)
     {
         address[] memory currentTokens = poolToken.getCurrentTokens();
         details.tokens = new TokenWithWeight[](currentTokens.length);
@@ -52,12 +52,12 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 parts,
         uint256 flags
     )
-        public
-        view
-        returns (
-            uint256 returnAmount,
-            uint256[] memory distribution
-        )
+    public
+    view
+    returns (
+        uint256 returnAmount,
+        uint256[] memory distribution
+    )
     {
         if (fromToken == toToken) {
             return (amount, new uint256[](DEXES_COUNT));
@@ -135,12 +135,12 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 parts,
         uint256 flags
     )
-        private
-        view
-        returns (
-            uint256 returnAmount,
-            uint256[] memory distribution
-        )
+    private
+    view
+    returns (
+        uint256 returnAmount,
+        uint256[] memory distribution
+    )
     {
         distribution = new uint256[](DEXES_COUNT);
 
@@ -184,12 +184,12 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 parts,
         uint256 flags
     )
-        private
-        view
-        returns (
-            uint256 minFundAmount,
-            uint256[] memory distribution
-        )
+    private
+    view
+    returns (
+        uint256 minFundAmount,
+        uint256[] memory distribution
+    )
     {
         distribution = new uint256[](DEXES_COUNT);
         minFundAmount = uint256(-1);
@@ -222,37 +222,37 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
             }
 
             fundAmounts[i] = tokenAmounts[i]
-                .mul(details.totalSupply)
-                .div(details.tokens[i].reserveBalance);
+            .mul(details.totalSupply)
+            .div(details.tokens[i].reserveBalance);
 
             if (fundAmounts[i] < minFundAmount) {
                 minFundAmount = fundAmounts[i];
             }
         }
 
-//        uint256 _minFundAmount = minFundAmount;
-//        uint256 swapFee = IBPool(address(poolToken)).getSwapFee();
+        //        uint256 _minFundAmount = minFundAmount;
+        //        uint256 swapFee = IBPool(address(poolToken)).getSwapFee();
         // Swap leftovers for PoolToken
-//        for (uint i = 0; i < details.tokens.length; i++) {
-//            if (_minFundAmount == fundAmounts[i]) {
-//                continue;
-//            }
-//
-//            uint256 leftover = tokenAmounts[i].sub(
-//                fundAmounts[i].mul(details.tokens[i].reserveBalance).div(details.totalSupply)
-//            );
-//
-//            uint256 tokenRet = IBPool(address(poolToken)).calcPoolOutGivenSingleIn(
-//                details.tokens[i].reserveBalance,
-//                details.tokens[i].denormalizedWeight,
-//                details.totalSupply,
-//                details.totalWeight,
-//                leftover,
-//                swapFee
-//            );
-//
-//            minFundAmount = minFundAmount.add(tokenRet);
-//        }
+        //        for (uint i = 0; i < details.tokens.length; i++) {
+        //            if (_minFundAmount == fundAmounts[i]) {
+        //                continue;
+        //            }
+        //
+        //            uint256 leftover = tokenAmounts[i].sub(
+        //                fundAmounts[i].mul(details.tokens[i].reserveBalance).div(details.totalSupply)
+        //            );
+        //
+        //            uint256 tokenRet = IBPool(address(poolToken)).calcPoolOutGivenSingleIn(
+        //                details.tokens[i].reserveBalance,
+        //                details.tokens[i].denormalizedWeight,
+        //                details.totalSupply,
+        //                details.totalWeight,
+        //                leftover,
+        //                swapFee
+        //            );
+        //
+        //            minFundAmount = minFundAmount.add(tokenRet);
+        //        }
 
         return (minFundAmount, distribution);
     }
@@ -401,8 +401,8 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
         uint256 curFundAmount;
         for (uint i = 0; i < details.tokens.length; i++) {
             uint256 exchangeAmount = amount
-                .mul(details.tokens[i].denormalizedWeight)
-                .div(details.totalWeight);
+            .mul(details.tokens[i].denormalizedWeight)
+            .div(details.totalWeight);
 
             if (details.tokens[i].token != fromToken) {
                 uint256 tokenBalanceBefore = details.tokens[i].token.balanceOf(address(this));
@@ -423,11 +423,11 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
                 uint256 tokenBalanceAfter = details.tokens[i].token.balanceOf(address(this));
 
                 curFundAmount = (
-                    tokenBalanceAfter.sub(tokenBalanceBefore)
+                tokenBalanceAfter.sub(tokenBalanceBefore)
                 ).mul(details.totalSupply).div(details.tokens[i].reserveBalance);
             } else {
                 curFundAmount = (
-                    exchangeAmount
+                exchangeAmount
                 ).mul(details.totalSupply).div(details.tokens[i].reserveBalance);
             }
 
@@ -436,7 +436,7 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
             }
 
             maxAmountsIn[i] = uint256(-1);
-            _infiniteApproveIfNeeded(details.tokens[i].token, address(poolToken));
+            details.tokens[i].token.universalApprove(address(poolToken), uint256(-1));
         }
 
         // todo: check for vulnerability

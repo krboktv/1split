@@ -440,7 +440,7 @@ contract OneSplitCurvePoolToken is OneSplitBaseWrap, OneSplitCurvePoolTokenBase 
                 .mul(details.tokens[i].weightedReserveBalance)
                 .div(details.totalWeightedBalance);
 
-            _infiniteApproveIfNeeded(details.tokens[i].token, address(curveInfo.curve));
+            details.tokens[i].token.universalApprove(address(curveInfo.curve), uint256(-1));
 
             if (details.tokens[i].token == fromToken) {
                 tokenAmounts = abi.encodePacked(tokenAmounts, exchangeAmount);
