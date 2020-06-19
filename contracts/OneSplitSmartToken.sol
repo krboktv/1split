@@ -370,11 +370,10 @@ contract OneSplitSmartToken is OneSplitBaseWrap, OneSplitSmartTokenBase {
                 dist[j] = (distribution[j] >> (i * 8)) & 0xFF;
             }
 
-            this.swap(
+            super._swap(
                 _canonicalSUSD(details.tokens[i].token),
                 toToken,
                 _canonicalSUSD(details.tokens[i].token).universalBalanceOf(address(this)),
-                0,
                 dist,
                 flags
             );
@@ -409,11 +408,10 @@ contract OneSplitSmartToken is OneSplitBaseWrap, OneSplitSmartTokenBase {
                     dist[j] = (distribution[j] >> (i * 8)) & 0xFF;
                 }
 
-                this.swap(
+                super._swap(
                     fromToken,
                     _canonicalSUSD(details.tokens[i].token),
                     exchangeAmount,
-                    0,
                     dist,
                     flags
                 );

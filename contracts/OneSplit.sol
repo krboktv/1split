@@ -217,9 +217,11 @@ contract OneSplitWrap is
     ) public payable returns(uint256 returnAmount) {
         if (msg.sender != address(this)) {
             fromToken.universalTransferFrom(msg.sender, address(this), amount);
+            uint256 confirmed = fromToken.universalBalanceOf(address(this));
+            _swap(fromToken, destToken, confirmed, distribution, flags);
+        } else {
+            _swap(fromToken, destToken, amount, distribution, flags);
         }
-        uint256 confirmed = fromToken.universalBalanceOf(address(this));
-        _swap(fromToken, destToken, confirmed, distribution, flags);
 
         returnAmount = destToken.universalBalanceOf(address(this));
         require(returnAmount >= minReturn, "OneSplit: actual return amount is less than minReturn");
