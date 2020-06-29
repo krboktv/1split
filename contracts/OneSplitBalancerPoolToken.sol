@@ -455,7 +455,7 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
                 );
 
                 curFundAmount = _calcPoolOutAmount(
-                    details.tokens[i].token.balanceOf(address(this)),
+                    details.tokens[i].token.universalBalanceOf(address(this)),
                     details.tokens[i].reserveBalance,
                     details.totalSupply
                 );
@@ -472,14 +472,17 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
             }
 
             maxAmountsIn[i] = uint256(-1);
-            details.tokens[i].token.universalApprove(address(poolToken), uint256(- 1));
+            details.tokens[i].token.universalApprove(address(poolToken), uint256(-1));
         }
 
         IBPool(address(poolToken)).joinPool(minFundAmount, maxAmountsIn);
 
         // Return leftovers
         for (uint i = 0; i < details.tokens.length; i++) {
-            details.tokens[i].token.universalTransfer(msg.sender, details.tokens[i].token.balanceOf(address(this)));
+            details.tokens[i].token.universalTransfer(
+                msg.sender,
+                    details.tokens[i].token.universalBalanceOf(address(this))
+            );
         }
     }
 }
