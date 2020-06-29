@@ -8,23 +8,25 @@ contract OneSplitCurvePoolTokenBase {
     using SafeMath for uint256;
     using UniversalERC20 for IERC20;
 
-    IERC20 constant curveSusdToken = IERC20(0xC25a3A3b969415c80451098fa907EC722572917F);
-    IERC20 constant curveIearnToken = IERC20(0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8);
-    IERC20 constant curveCompoundToken = IERC20(0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2);
-    IERC20 constant curveUsdtToken = IERC20(0x9fC689CCaDa600B6DF723D9E47D84d76664a1F23);
-    IERC20 constant curveBinanceToken = IERC20(0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B);
-    IERC20 constant curvePaxToken = IERC20(0xD905e2eaeBe188fc92179b6350807D8bd91Db0D8);
-    IERC20 constant curveRenBtcToken = IERC20(0x7771F704490F9C0C3B06aFe8960dBB6c58CBC812);
-    IERC20 constant curveTBtcToken = IERC20(0x1f2a662FB513441f06b8dB91ebD9a1466462b275);
+    IERC20 constant internal curveSusdToken = IERC20(0xC25a3A3b969415c80451098fa907EC722572917F);
+    IERC20 constant internal curveIearnToken = IERC20(0xdF5e0e81Dff6FAF3A7e52BA697820c5e32D806A8);
+    IERC20 constant internal curveCompoundToken = IERC20(0x845838DF265Dcd2c412A1Dc9e959c7d08537f8a2);
+    IERC20 constant internal curveUsdtToken = IERC20(0x9fC689CCaDa600B6DF723D9E47D84d76664a1F23);
+    IERC20 constant internal curveBinanceToken = IERC20(0x3B3Ac5386837Dc563660FB6a0937DFAa5924333B);
+    IERC20 constant internal curvePaxToken = IERC20(0xD905e2eaeBe188fc92179b6350807D8bd91Db0D8);
+    IERC20 constant internal curveRenBtcToken = IERC20(0x7771F704490F9C0C3B06aFe8960dBB6c58CBC812);
+    // IERC20 constant internal curveTBtcToken = IERC20(0x1f2a662FB513441f06b8dB91ebD9a1466462b275);
+    IERC20 constant internal curveSBTCToken = IERC20(0x075b1bb99792c9E1041bA13afEf80C91a1e70fB3);
 
-    ICurve constant curveSusd = ICurve(0xA5407eAE9Ba41422680e2e00537571bcC53efBfD);
-    ICurve constant curveIearn = ICurve(0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51);
-    ICurve constant curveCompound = ICurve(0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56);
-    ICurve constant curveUsdt = ICurve(0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C);
-    ICurve constant curveBinance = ICurve(0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27);
-    ICurve constant curvePax = ICurve(0x06364f10B501e868329afBc005b3492902d6C763);
-    ICurve constant curveRenBtc = ICurve(0x8474c1236F0Bc23830A23a41aBB81B2764bA9f4F);
-    ICurve constant curveTBtc = ICurve(0x9726e9314eF1b96E45f40056bEd61A088897313E);
+    ICurve constant internal curveSusd = ICurve(0xA5407eAE9Ba41422680e2e00537571bcC53efBfD);
+    ICurve constant internal curveIearn = ICurve(0x45F783CCE6B7FF23B2ab2D70e416cdb7D6055f51);
+    ICurve constant internal curveCompound = ICurve(0xA2B47E3D5c44877cca798226B7B8118F9BFb7A56);
+    ICurve constant internal curveUsdt = ICurve(0x52EA46506B9CC5Ef470C5bf89f17Dc28bB35D85C);
+    ICurve constant internal curveBinance = ICurve(0x79a8C46DeA5aDa233ABaFFD40F3A0A2B1e5A4F27);
+    ICurve constant internal curvePax = ICurve(0x06364f10B501e868329afBc005b3492902d6C763);
+    ICurve constant internal curveRenBtc = ICurve(0x8474c1236F0Bc23830A23a41aBB81B2764bA9f4F);
+    // ICurve constant curveTBtc = ICurve(0x9726e9314eF1b96E45f40056bEd61A088897313E);
+    ICurve constant internal curveSBTC = ICurve(0x7fC77b5c7614E1533320Ea6DDc2Eb61fa00A9714);
 
     struct CurveTokenInfo {
         IERC20 token;
@@ -54,7 +56,8 @@ contract OneSplitCurvePoolTokenBase {
             token == curveBinanceToken ||
             token == curvePaxToken ||
             token == curveRenBtcToken ||
-            token == curveTBtcToken
+            // token == curveTBtcToken ||
+            token == curveSBTCToken
         ) {
             return true;
         }
@@ -108,8 +111,14 @@ contract OneSplitCurvePoolTokenBase {
             return curveInfo;
         }
 
-        if (poolToken == curveTBtcToken) {
-            curveInfo.curve = curveTBtc;
+//        if (poolToken == curveTBtcToken) {
+//            curveInfo.curve = curveTBtc;
+//            curveInfo.tokenCount = 3;
+//            return curveInfo;
+//        }
+
+        if (poolToken == curveSBTCToken) {
+            curveInfo.curve = curveSBTC;
             curveInfo.tokenCount = 3;
             return curveInfo;
         }
@@ -166,53 +175,57 @@ contract OneSplitCurvePoolTokenBase {
 
 
 contract OneSplitCurvePoolTokenView is OneSplitViewWrapBase, OneSplitCurvePoolTokenBase {
-    function getExpectedReturn(
+    function getExpectedReturnWithGas(
         IERC20 fromToken,
         IERC20 toToken,
         uint256 amount,
         uint256 parts,
-        uint256 flags
+        uint256 flags,
+        uint256 destTokenEthPriceTimesGasPrice
     )
         public
         view
         returns (
             uint256 returnAmount,
+            uint256,
             uint256[] memory distribution
         )
     {
         if (fromToken == toToken) {
-            return (amount, new uint256[](DEXES_COUNT));
+            return (amount, 0, new uint256[](DEXES_COUNT));
         }
-
 
         if (!flags.check(FLAG_DISABLE_CURVE_ZAP)) {
             if (_isPoolToken(fromToken)) {
-                return _getExpectedReturnFromCurvePoolToken(
+                (returnAmount, distribution) = _getExpectedReturnFromCurvePoolToken(
                     fromToken,
                     toToken,
                     amount,
                     parts,
                     FLAG_DISABLE_CURVE_ZAP
                 );
+                return (returnAmount, 0, distribution);
             }
 
             if (_isPoolToken(toToken)) {
-                return _getExpectedReturnToCurvePoolToken(
+                (returnAmount, distribution) = _getExpectedReturnToCurvePoolToken(
                     fromToken,
                     toToken,
                     amount,
                     parts,
                     FLAG_DISABLE_CURVE_ZAP
                 );
+                return (returnAmount, 0, distribution);
             }
         }
 
-        return super.getExpectedReturn(
+        return super.getExpectedReturnWithGas(
             fromToken,
             toToken,
             amount,
             parts,
-            flags
+            flags,
+            destTokenEthPriceTimesGasPrice
         );
     }
 
@@ -246,12 +259,13 @@ contract OneSplitCurvePoolTokenView is OneSplitViewWrapBase, OneSplitCurvePoolTo
                 continue;
             }
 
-            (uint256 ret, uint256[] memory dist) = this.getExpectedReturn(
+            (uint256 ret, ,uint256[] memory dist) = this.getExpectedReturnWithGas(
                 coin,
                 toToken,
                 tokenAmountOut,
                 parts,
-                flags
+                flags,
+                0
             );
 
             returnAmount = returnAmount.add(ret);
@@ -297,12 +311,13 @@ contract OneSplitCurvePoolTokenView is OneSplitViewWrapBase, OneSplitCurvePoolTo
                 continue;
             }
 
-            (uint256 tokenAmount, uint256[] memory dist) = this.getExpectedReturn(
+            (uint256 tokenAmount, ,uint256[] memory dist) = this.getExpectedReturnWithGas(
                 fromToken,
                 details.tokens[i].token,
                 exchangeAmount,
                 parts,
-                flags
+                flags,
+                0
             );
 
             tokenAmounts = abi.encodePacked(tokenAmounts, tokenAmount);
@@ -408,11 +423,10 @@ contract OneSplitCurvePoolToken is OneSplitBaseWrap, OneSplitCurvePoolTokenBase 
 
             uint256 exchangeTokenAmount = coin.universalBalanceOf(address(this));
 
-            this.swap(
+            super._swap(
                 coin,
                 toToken,
                 exchangeTokenAmount,
-                0,
                 dist,
                 flags
             );
@@ -451,11 +465,10 @@ contract OneSplitCurvePoolToken is OneSplitBaseWrap, OneSplitCurvePoolTokenBase 
                 dist[j] = (distribution[j] >> (i * 8)) & 0xFF;
             }
 
-            this.swap(
+            super._swap(
                 fromToken,
                 details.tokens[i].token,
                 exchangeAmount,
-                0,
                 dist,
                 flags
             );

@@ -33,7 +33,9 @@ contract OneSplitViewWrap is
     OneSplitIdleView,
     OneSplitWethView,
     OneSplitDMMView,
-    OneSplitMultiPathView
+    OneSplitMultiPathView,
+    OneSplitCurvePoolTokenView,
+    OneSplitBalancerPoolTokenView
     //OneSplitSmartTokenView
 {
     IOneSplitView public oneSplitView;
@@ -136,7 +138,9 @@ contract OneSplitWrap is
     OneSplitIdle,
     OneSplitWeth,
     OneSplitDMM,
-    OneSplitMultiPath
+    OneSplitMultiPath,
+    OneSplitCurvePoolTokenView,
+    OneSplitBalancerPoolTokenView
     //OneSplitSmartToken
 {
     IOneSplitView public oneSplitView;
