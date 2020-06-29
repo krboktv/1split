@@ -17,12 +17,12 @@ import "./OneSplitCurvePoolToken.sol";
 import "./OneSplitSmartToken.sol";
 import "./OneSplitUniswapV2PoolToken.sol";
 import "./OneSplitMStable.sol";
+import "./OneSplitDMM.sol";
 //import "./OneSplitSmartToken.sol";
 
 
 contract OneSplitViewWrap is
     OneSplitViewWrapBase,
-    OneSplitMultiPathView,
     OneSplitMStableView,
     OneSplitChaiView,
     OneSplitBdaiView,
@@ -32,11 +32,9 @@ contract OneSplitViewWrap is
     OneSplitIearnView,
     OneSplitIdleView,
     OneSplitWethView,
-    //OneSplitBalancerPoolTokenView,
-    //OneSplitUniswapPoolTokenView,
-    //OneSplitCurvePoolTokenView
-    OneSplitSmartTokenView
-//    OneSplitUniswapV2PoolTokenView
+    OneSplitDMMView,
+    OneSplitMultiPathView
+    //OneSplitSmartTokenView
 {
     IOneSplitView public oneSplitView;
 
@@ -128,7 +126,6 @@ contract OneSplitViewWrap is
 
 contract OneSplitWrap is
     OneSplitBaseWrap,
-    OneSplitMultiPath,
     OneSplitMStable,
     OneSplitChai,
     OneSplitBdai,
@@ -138,11 +135,9 @@ contract OneSplitWrap is
     OneSplitIearn,
     OneSplitIdle,
     OneSplitWeth,
-    //OneSplitBalancerPoolToken,
-    //OneSplitUniswapPoolToken,
-    //OneSplitCurvePoolToken
-    OneSplitSmartToken
-//    OneSplitUniswapV2PoolToken
+    OneSplitDMM,
+    OneSplitMultiPath
+    //OneSplitSmartToken
 {
     IOneSplitView public oneSplitView;
     IOneSplit public oneSplit;
@@ -212,25 +207,18 @@ contract OneSplitWrap is
         IERC20 destToken,
         uint256 amount,
         uint256 minReturn,
-        uint256[] memory distribution, // [Uniswap, Kyber, Bancor, Oasis]
-        uint256 flags // 16 - Compound, 32 - Fulcrum, 64 - Chai, 128 - Aave, 256 - SmartToken, 1024 - bDAI
+        uint256[] memory distribution,
+        uint256 flags
     ) public payable returns(uint256 returnAmount) {
-        if (msg.sender != address(this)) {
-            fromToken.universalTransferFrom(msg.sender, address(this), amount);
-            uint256 confirmed = fromToken.universalBalanceOf(address(this));
-            _swap(fromToken, destToken, confirmed, distribution, flags);
-        } else {
-            _swap(fromToken, destToken, amount, distribution, flags);
-        }
+        fromToken.universalTransferFrom(msg.sender, address(this), amount);
+        uint256 confirmed = fromToken.universalBalanceOf(address(this));
+        _swap(fromToken, destToken, confirmed, distribution, flags);
 
         returnAmount = destToken.universalBalanceOf(address(this));
         require(returnAmount >= minReturn, "OneSplit: actual return amount is less than minReturn");
-
-        if (msg.sender != address(this)) {
-            destToken.universalTransfer(msg.sender, returnAmount);
-            fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
-        }
-}
+        destToken.universalTransfer(msg.sender, returnAmount);
+        fromToken.universalTransfer(msg.sender, fromToken.universalBalanceOf(address(this)));
+    }
 
     function _swapFloor(
         IERC20 fromToken,
@@ -239,22 +227,14 @@ contract OneSplitWrap is
         uint256[] memory distribution,
         uint256 flags
     ) internal {
-        (bool success, bytes memory data) = address(oneSplit).delegatecall(
-            abi.encodeWithSelector(
-                this.swap.selector,
-                fromToken,
-                destToken,
-                amount,
-                0,
-                distribution,
-                flags
-            )
+        fromToken.universalApprove(address(oneSplit), amount);
+        oneSplit.swap.value(fromToken.isETH() ? amount : 0)(
+            fromToken,
+            destToken,
+            amount,
+            0,
+            distribution,
+            flags
         );
-
-        assembly {
-            switch success
-                // delegatecall returns 0 on error.
-                case 0 { revert(add(data, 32), returndatasize) }
-        }
     }
 }
