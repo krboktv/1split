@@ -113,66 +113,68 @@ pragma solidity ^0.5.0;
 
 contract IOneSplitConsts {
     // flags = FLAG_DISABLE_UNISWAP + FLAG_DISABLE_KYBER + ...
-    uint256 constant internal FLAG_DISABLE_UNISWAP = 0x01;
-    uint256 constant internal FLAG_DISABLE_KYBER = 0x02;
-    uint256 constant internal FLAG_DISABLE_BANCOR = 0x04;
-    uint256 constant internal FLAG_DISABLE_OASIS = 0x08;
-    uint256 constant internal FLAG_DISABLE_COMPOUND = 0x10;
-    uint256 constant internal FLAG_DISABLE_FULCRUM = 0x20;
-    uint256 constant internal FLAG_DISABLE_CHAI = 0x40;
-    uint256 constant internal FLAG_DISABLE_AAVE = 0x80;
-    uint256 constant internal FLAG_DISABLE_SMART_TOKEN = 0x100;
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_ETH = 0x200; // Turned off by default
-    uint256 constant internal FLAG_DISABLE_BDAI = 0x400;
-    uint256 constant internal FLAG_DISABLE_IEARN = 0x800;
-    uint256 constant internal FLAG_DISABLE_CURVE_COMPOUND = 0x1000;
-    uint256 constant internal FLAG_DISABLE_CURVE_USDT = 0x2000;
-    uint256 constant internal FLAG_DISABLE_CURVE_Y = 0x4000;
-    uint256 constant internal FLAG_DISABLE_CURVE_BINANCE = 0x8000;
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_DAI = 0x10000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_USDC = 0x20000; // Turned off by default
-    uint256 constant internal FLAG_DISABLE_CURVE_SYNTHETIX = 0x40000;
-    uint256 constant internal FLAG_DISABLE_WETH = 0x80000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_COMPOUND = 0x100000; // Works only when one of assets is ETH or FLAG_ENABLE_MULTI_PATH_ETH
-    uint256 constant internal FLAG_DISABLE_UNISWAP_CHAI = 0x200000; // Works only when ETH<>DAI or FLAG_ENABLE_MULTI_PATH_ETH
-    uint256 constant internal FLAG_DISABLE_UNISWAP_AAVE = 0x400000; // Works only when one of assets is ETH or FLAG_ENABLE_MULTI_PATH_ETH
-    uint256 constant internal FLAG_DISABLE_IDLE = 0x800000;
-    uint256 constant internal FLAG_DISABLE_MOONISWAP = 0x1000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2 = 0x2000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2_ETH = 0x4000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2_DAI = 0x8000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2_USDC = 0x10000000;
-    uint256 constant internal FLAG_DISABLE_ALL_SPLIT_SOURCES = 0x20000000;
-    uint256 constant internal FLAG_DISABLE_ALL_WRAP_SOURCES = 0x40000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_PAX = 0x80000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_RENBTC = 0x100000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_TBTC = 0x200000000;
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_USDT = 0x400000000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_WBTC = 0x800000000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_TBTC = 0x1000000000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_MULTI_PATH_RENBTC = 0x2000000000; // Turned off by default
-    uint256 constant internal FLAG_DISABLE_DFORCE_SWAP = 0x4000000000;
-    uint256 constant internal FLAG_DISABLE_SHELL = 0x8000000000;
-    uint256 constant internal FLAG_ENABLE_CHI_BURN = 0x10000000000;
-    uint256 constant internal FLAG_DISABLE_MSTABLE_MUSD = 0x20000000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_SBTC = 0x40000000000;
-    uint256 constant internal FLAG_DISABLE_DMM = 0x80000000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_ALL = 0x100000000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_ALL = 0x200000000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2_ALL = 0x400000000000;
-    uint256 constant internal FLAG_DISABLE_SPLIT_RECALCULATION = 0x800000000000;
-    uint256 constant internal FLAG_DISABLE_BALANCER_ALL = 0x1000000000000;
-    uint256 constant internal FLAG_DISABLE_BALANCER_1 = 0x2000000000000;
-    uint256 constant internal FLAG_DISABLE_BALANCER_2 = 0x4000000000000;
-    uint256 constant internal FLAG_DISABLE_BALANCER_3 = 0x8000000000000;
-    uint256 constant internal FLAG_ENABLE_KYBER_UNISWAP_RESERVE = 0x1000000000000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_KYBER_OASIS_RESERVE = 0x2000000000000; // Turned off by default
-    uint256 constant internal FLAG_ENABLE_KYBER_BANCOR_RESERVE = 0x4000000000000; // Turned off by default
+    uint256 internal constant FLAG_DISABLE_UNISWAP = 0x01;
+    uint256 internal constant FLAG_DISABLE_KYBER = 0x02;
+    uint256 internal constant FLAG_DISABLE_BANCOR = 0x04;
+    uint256 internal constant FLAG_DISABLE_OASIS = 0x08;
+    uint256 internal constant FLAG_DISABLE_COMPOUND = 0x10;
+    uint256 internal constant FLAG_DISABLE_FULCRUM = 0x20;
+    uint256 internal constant FLAG_DISABLE_CHAI = 0x40;
+    uint256 internal constant FLAG_DISABLE_AAVE = 0x80;
+    uint256 internal constant FLAG_DISABLE_SMART_TOKEN = 0x100;
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_ETH = 0x200; // Turned off by default
+    uint256 internal constant FLAG_DISABLE_BDAI = 0x400;
+    uint256 internal constant FLAG_DISABLE_IEARN = 0x800;
+    uint256 internal constant FLAG_DISABLE_CURVE_COMPOUND = 0x1000;
+    uint256 internal constant FLAG_DISABLE_CURVE_USDT = 0x2000;
+    uint256 internal constant FLAG_DISABLE_CURVE_Y = 0x4000;
+    uint256 internal constant FLAG_DISABLE_CURVE_BINANCE = 0x8000;
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_DAI = 0x10000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_USDC = 0x20000; // Turned off by default
+    uint256 internal constant FLAG_DISABLE_CURVE_SYNTHETIX = 0x40000;
+    uint256 internal constant FLAG_DISABLE_WETH = 0x80000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_COMPOUND = 0x100000; // Works only when one of assets is ETH or FLAG_ENABLE_MULTI_PATH_ETH
+    uint256 internal constant FLAG_DISABLE_UNISWAP_CHAI = 0x200000; // Works only when ETH<>DAI or FLAG_ENABLE_MULTI_PATH_ETH
+    uint256 internal constant FLAG_DISABLE_UNISWAP_AAVE = 0x400000; // Works only when one of assets is ETH or FLAG_ENABLE_MULTI_PATH_ETH
+    uint256 internal constant FLAG_DISABLE_IDLE = 0x800000;
+    uint256 internal constant FLAG_DISABLE_MOONISWAP = 0x1000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2 = 0x2000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_ETH = 0x4000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_DAI = 0x8000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_USDC = 0x10000000;
+    uint256 internal constant FLAG_DISABLE_ALL_SPLIT_SOURCES = 0x20000000;
+    uint256 internal constant FLAG_DISABLE_ALL_WRAP_SOURCES = 0x40000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_PAX = 0x80000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_RENBTC = 0x100000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_TBTC = 0x200000000;
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_USDT = 0x400000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_WBTC = 0x800000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_TBTC = 0x1000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_RENBTC = 0x2000000000; // Turned off by default
+    uint256 internal constant FLAG_DISABLE_DFORCE_SWAP = 0x4000000000;
+    uint256 internal constant FLAG_DISABLE_SHELL = 0x8000000000;
+    uint256 internal constant FLAG_ENABLE_CHI_BURN = 0x10000000000;
+    uint256 internal constant FLAG_DISABLE_MSTABLE_MUSD = 0x20000000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_SBTC = 0x40000000000;
+    uint256 internal constant FLAG_DISABLE_DMM = 0x80000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_ALL = 0x100000000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_ALL = 0x200000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_ALL = 0x400000000000;
+    uint256 internal constant FLAG_DISABLE_SPLIT_RECALCULATION = 0x800000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_ALL = 0x1000000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_1 = 0x2000000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_2 = 0x4000000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_3 = 0x8000000000000;
+    uint256 internal constant FLAG_ENABLE_KYBER_UNISWAP_RESERVE = 0x1000000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_KYBER_OASIS_RESERVE = 0x2000000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_KYBER_BANCOR_RESERVE = 0x4000000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_REFERRAL_GAS_SPONSORSHIP = 0x8000000000000; // Turned off by default
+    uint256 internal constant FLAG_ENABLE_MULTI_PATH_COMP = 0x10000000000000; // Turned off by default
 
-    uint256 constant internal FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x8000000000000;
-    uint256 constant internal FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x10000000000000;
-    uint256 constant internal FLAG_DISABLE_CURVE_ZAP = 0x20000000000000;
-    uint256 constant internal FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x40000000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x20000000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x40000000000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_ZAP = 0x80000000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x100000000000000;
 }
 
 
@@ -1387,6 +1389,7 @@ contract OneSplitRoot is IOneSplitView {
     IERC20 constant internal tbtc = IERC20(0x1bBE271d15Bb64dF0bc6CD28Df9Ff322F2eBD847);
     IERC20 constant internal hbtc = IERC20(0x0316EB71485b0Ab14103307bf65a021042c6d380);
     IERC20 constant internal sbtc = IERC20(0xfE18be6b3Bd88A2D2A7f928d00292E7a9963CfC6);
+    IERC20 constant internal comp = IERC20(0xc00e94Cb662C3520282E6f5717214004A7f26888);
 
     IKyberNetworkProxy constant internal kyberNetworkProxy = IKyberNetworkProxy(0x818E6FECD516Ecc3849DAf6845e3EC868087B755);
     IUniswapFactory constant internal uniswapFactory = IUniswapFactory(0xc0a47dFe034B400B47bDaD5FecDa2621de6c4d95);
@@ -3603,68 +3606,32 @@ pragma solidity ^0.5.0;
 
 contract OneSplitMultiPathBase is IOneSplitConsts, OneSplitRoot {
     function _getMultiPathToken(uint256 flags) internal pure returns(IERC20 midToken) {
-        uint256[7] memory allFlags = [
+        uint256[8] memory allFlags = [
             FLAG_ENABLE_MULTI_PATH_ETH,
             FLAG_ENABLE_MULTI_PATH_DAI,
             FLAG_ENABLE_MULTI_PATH_USDC,
             FLAG_ENABLE_MULTI_PATH_USDT,
             FLAG_ENABLE_MULTI_PATH_WBTC,
             FLAG_ENABLE_MULTI_PATH_TBTC,
-            FLAG_ENABLE_MULTI_PATH_RENBTC
+            FLAG_ENABLE_MULTI_PATH_RENBTC,
+            FLAG_ENABLE_MULTI_PATH_COMP
         ];
 
-        IERC20[7] memory allMidTokens = [
+        IERC20[8] memory allMidTokens = [
             ETH_ADDRESS,
             dai,
             usdc,
             usdt,
             wbtc,
             tbtc,
-            renbtc
+            renbtc,
+            comp
         ];
 
         for (uint i = 0; i < allFlags.length; i++) {
             if (flags.check(allFlags[i])) {
                 require(midToken == IERC20(0), "OneSplit: Do not use multipath with each other");
                 midToken = allMidTokens[i];
-            }
-        }
-    }
-
-    function _getFlagsByDistribution(uint256[] memory distribution) internal pure returns(uint256 flags) {
-        uint256[DEXES_COUNT] memory sourcesFlags = [
-            FLAG_DISABLE_UNISWAP,
-            FLAG_DISABLE_KYBER,
-            FLAG_DISABLE_BANCOR,
-            FLAG_DISABLE_OASIS,
-            FLAG_DISABLE_CURVE_COMPOUND,
-            FLAG_DISABLE_CURVE_USDT,
-            FLAG_DISABLE_CURVE_Y,
-            FLAG_DISABLE_CURVE_BINANCE,
-            FLAG_DISABLE_CURVE_SYNTHETIX,
-            FLAG_DISABLE_UNISWAP_COMPOUND,
-            FLAG_DISABLE_UNISWAP_CHAI,
-            FLAG_DISABLE_UNISWAP_AAVE,
-            FLAG_DISABLE_MOONISWAP,
-            FLAG_DISABLE_UNISWAP_V2,
-            FLAG_DISABLE_UNISWAP_V2_ETH,
-            FLAG_DISABLE_UNISWAP_V2_DAI,
-            FLAG_DISABLE_UNISWAP_V2_USDC,
-            FLAG_DISABLE_CURVE_PAX,
-            FLAG_DISABLE_CURVE_RENBTC,
-            FLAG_DISABLE_CURVE_TBTC,
-            FLAG_DISABLE_DFORCE_SWAP,
-            FLAG_DISABLE_SHELL,
-            FLAG_DISABLE_MSTABLE_MUSD,
-            FLAG_DISABLE_CURVE_SBTC,
-            0,
-            0,
-            0
-        ];
-
-        for (uint i = 0; i < distribution.length; i++) {
-            if (distribution[i] > 0) {
-                flags |= sourcesFlags[i];
             }
         }
     }
@@ -3731,7 +3698,7 @@ contract OneSplitMultiPathView is OneSplitViewWrapBase, OneSplitMultiPathBase {
                 destToken,
                 returnAmount,
                 parts,
-                _flags | _getFlagsByDistribution(distribution),
+                _flags, // Double tap into the same source is not an issue since price wouldn't be worse
                 destTokenEthPriceTimesGasPrice
             );
             for (uint i = 0; i < distribution.length; i++) {
@@ -3774,7 +3741,6 @@ contract OneSplitMultiPath is OneSplitBaseWrap, OneSplitMultiPathBase {
                 dist,
                 flags
             );
-            uint256 additionalFlags = _getFlagsByDistribution(distribution);
 
             for (uint i = 0; i < distribution.length; i++) {
                 dist[i] = (distribution[i] >> 8) & 0xFF;
@@ -3784,7 +3750,7 @@ contract OneSplitMultiPath is OneSplitBaseWrap, OneSplitMultiPathBase {
                 destToken,
                 midToken.universalBalanceOf(address(this)),
                 dist,
-                flags | additionalFlags
+                flags
             );
             return;
         }
