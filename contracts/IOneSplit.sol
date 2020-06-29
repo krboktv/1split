@@ -88,10 +88,10 @@ contract IOneSplitConsts {
     uint256 internal constant FLAG_ENABLE_KYBER_OASIS_RESERVE = 0x2000000000000; // Turned off by default
     uint256 internal constant FLAG_ENABLE_KYBER_BANCOR_RESERVE = 0x4000000000000; // Turned off by default
 
-    uint256 public constant FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x8000000000000;
-    uint256 public constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x10000000000000;
-    uint256 public constant FLAG_DISABLE_CURVE_ZAP = 0x20000000000000;
-    uint256 public constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x40000000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_POOL_TOKEN = 0x8000000000000;
+    uint256 internal constant FLAG_DISABLE_BALANCER_POOL_TOKEN = 0x10000000000000;
+    uint256 internal constant FLAG_DISABLE_CURVE_ZAP = 0x20000000000000;
+    uint256 internal constant FLAG_DISABLE_UNISWAP_V2_POOL_TOKEN = 0x40000000000000;
 }
 
 
