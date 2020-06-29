@@ -8,6 +8,8 @@ import "./interface/IBPool.sol";
 contract OneSplitBalancerPoolTokenBase {
     using SafeMath for uint256;
 
+    uint internal constant BONE = 10**18;
+
     // todo: factory for Bronze release
     // may be changed in future
     IBFactory bFactory = IBFactory(0x9424B1412450D0f8Fc2255FAf6046b98213B76Bd);
@@ -25,9 +27,9 @@ contract OneSplitBalancerPoolTokenBase {
     }
 
     function _getPoolDetails(IBPool poolToken)
-    internal
-    view
-    returns(PoolTokenDetails memory details)
+        internal
+        view
+        returns (PoolTokenDetails memory details)
     {
         address[] memory currentTokens = poolToken.getCurrentTokens();
         details.tokens = new TokenWithWeight[](currentTokens.length);
@@ -40,27 +42,60 @@ contract OneSplitBalancerPoolTokenBase {
         }
     }
 
+    function _calcPoolOutAmount(
+        uint256 tokenAmount,
+        uint256 reserve,
+        uint256 totalSupply
+    )
+        internal
+        pure
+        returns (uint256)
+    {
+        uint256 ratio = bdiv(tokenAmount, reserve);
+        return bmul(ratio, totalSupply);
+    }
+
+    function bdiv(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b != 0, "ERR_DIV_ZERO");
+        uint c0 = a * BONE;
+        require(a == 0 || c0 / a == BONE, "ERR_DIV_INTERNAL"); // bmul overflow
+        uint c1 = c0 + (b / 2);
+        require(c1 >= c0, "ERR_DIV_INTERNAL"); //  badd require
+        uint c2 = c1 / b;
+        return c2;
+    }
+
+    function bmul(uint a, uint b) internal pure returns (uint) {
+        uint c0 = a * b;
+        require(a == 0 || c0 / a == b, "ERR_MUL_OVERFLOW");
+        uint c1 = c0 + (BONE / 2);
+        require(c1 >= c0, "ERR_MUL_OVERFLOW");
+        uint c2 = c1 / BONE;
+        return c2;
+    }
 }
 
 
 contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancerPoolTokenBase {
 
-    function getExpectedReturn(
+    function getExpectedReturnWithGas(
         IERC20 fromToken,
         IERC20 toToken,
         uint256 amount,
         uint256 parts,
-        uint256 flags
+        uint256 flags,
+        uint256 destTokenEthPriceTimesGasPrice
     )
-    public
-    view
-    returns (
-        uint256 returnAmount,
-        uint256[] memory distribution
-    )
+        public
+        view
+        returns(
+            uint256,
+            uint256,
+            uint256[] memory
+        )
     {
         if (fromToken == toToken) {
-            return (amount, new uint256[](DEXES_COUNT));
+            return (amount, 0, new uint256[](DEXES_COUNT));
         }
 
 
@@ -70,8 +105,8 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
 
             if (isPoolTokenFrom && isPoolTokenTo) {
                 (
-                uint256 returnETHAmount,
-                uint256[] memory poolTokenFromDistribution
+                    uint256 returnETHAmount,
+                    uint256[] memory poolTokenFromDistribution
                 ) = _getExpectedReturnFromBalancerPoolToken(
                     fromToken,
                     ETH_ADDRESS,
@@ -81,8 +116,8 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
                 );
 
                 (
-                uint256 returnPoolTokenToAmount,
-                uint256[] memory poolTokenToDistribution
+                    uint256 returnPoolTokenToAmount,
+                    uint256[] memory poolTokenToDistribution
                 ) = _getExpectedReturnToBalancerPoolToken(
                     ETH_ADDRESS,
                     toToken,
@@ -95,36 +130,39 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
                     poolTokenFromDistribution[i] |= poolTokenToDistribution[i] << 128;
                 }
 
-                return (returnPoolTokenToAmount, poolTokenFromDistribution);
+                return (returnPoolTokenToAmount, 0, poolTokenFromDistribution);
             }
 
             if (isPoolTokenFrom) {
-                return _getExpectedReturnFromBalancerPoolToken(
+                (uint256 returnAmount, uint256[] memory dist) = _getExpectedReturnFromBalancerPoolToken(
                     fromToken,
                     toToken,
                     amount,
                     parts,
                     FLAG_DISABLE_BALANCER_POOL_TOKEN
                 );
+                return (returnAmount, 0, dist);
             }
 
             if (isPoolTokenTo) {
-                return _getExpectedReturnToBalancerPoolToken(
+                (uint256 returnAmount, uint256[] memory dist) = _getExpectedReturnToBalancerPoolToken(
                     fromToken,
                     toToken,
                     amount,
                     parts,
                     FLAG_DISABLE_BALANCER_POOL_TOKEN
                 );
+                return (returnAmount, 0, dist);
             }
         }
 
-        return super.getExpectedReturn(
+        return super.getExpectedReturnWithGas(
             fromToken,
             toToken,
             amount,
             parts,
-            flags
+            flags,
+            destTokenEthPriceTimesGasPrice
         );
     }
 
@@ -135,12 +173,12 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 parts,
         uint256 flags
     )
-    private
-    view
-    returns (
-        uint256 returnAmount,
-        uint256[] memory distribution
-    )
+        private
+        view
+        returns (
+            uint256 returnAmount,
+            uint256[] memory distribution
+        )
     {
         distribution = new uint256[](DEXES_COUNT);
 
@@ -150,21 +188,22 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 pAiAfterExitFee = amount.sub(
             amount.mul(bToken.EXIT_FEE())
         );
-        uint256 ratio = pAiAfterExitFee.mul(1e18).div(poolToken.totalSupply());
+        uint256 ratio = bdiv(pAiAfterExitFee, poolToken.totalSupply());
         for (uint i = 0; i < currentTokens.length; i++) {
-            uint256 tokenAmountOut = bToken.getBalance(currentTokens[i]).mul(ratio).div(1e18);
+            uint256 tokenAmountOut = bmul(ratio, bToken.getBalance(currentTokens[i]));
 
             if (currentTokens[i] == address(toToken)) {
                 returnAmount = returnAmount.add(tokenAmountOut);
                 continue;
             }
 
-            (uint256 ret, uint256[] memory dist) = getExpectedReturn(
+            (uint256 ret, ,uint256[] memory dist) = super.getExpectedReturnWithGas(
                 IERC20(currentTokens[i]),
                 toToken,
                 tokenAmountOut,
                 parts,
-                flags
+                flags,
+                0
             );
 
             returnAmount = returnAmount.add(ret);
@@ -184,21 +223,21 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
         uint256 parts,
         uint256 flags
     )
-    private
-    view
-    returns (
-        uint256 minFundAmount,
-        uint256[] memory distribution
-    )
+        private
+        view
+        returns (
+            uint256 minFundAmount,
+            uint256[] memory distribution
+        )
     {
         distribution = new uint256[](DEXES_COUNT);
         minFundAmount = uint256(-1);
 
         PoolTokenDetails memory details = _getPoolDetails(IBPool(address(poolToken)));
 
-        uint256[] memory tokenAmounts = new uint256[](details.tokens.length);
         uint256[] memory dist;
-        uint256[] memory fundAmounts = new uint256[](details.tokens.length);
+        uint256 tokenAmount;
+        uint256 fundAmount;
 
         for (uint i = 0; i < details.tokens.length; i++) {
             uint256 exchangeAmount = amount.mul(
@@ -206,27 +245,30 @@ contract OneSplitBalancerPoolTokenView is OneSplitViewWrapBase, OneSplitBalancer
             ).div(details.totalWeight);
 
             if (details.tokens[i].token != fromToken) {
-                (tokenAmounts[i], dist) = getExpectedReturn(
+                (tokenAmount, ,dist) = this.getExpectedReturnWithGas(
                     fromToken,
                     details.tokens[i].token,
                     exchangeAmount,
                     parts,
-                    flags
+                    flags,
+                    0
                 );
 
                 for (uint j = 0; j < distribution.length; j++) {
                     distribution[j] |= dist[j] << (i * 8);
                 }
             } else {
-                tokenAmounts[i] = exchangeAmount;
+                tokenAmount = exchangeAmount;
             }
 
-            fundAmounts[i] = tokenAmounts[i]
-            .mul(details.totalSupply)
-            .div(details.tokens[i].reserveBalance);
+            fundAmount = _calcPoolOutAmount(
+                tokenAmount,
+                details.tokens[i].reserveBalance,
+                details.totalSupply
+            );
 
-            if (fundAmounts[i] < minFundAmount) {
-                minFundAmount = fundAmounts[i];
+            if (fundAmount < minFundAmount) {
+                minFundAmount = fundAmount;
             }
         }
 
@@ -349,13 +391,9 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
 
         address[] memory currentTokens = bToken.getCurrentTokens();
 
-        uint256 ratio = amount.sub(
-            amount.mul(bToken.EXIT_FEE())
-        ).mul(1e18).div(poolToken.totalSupply());
-
         uint256[] memory minAmountsOut = new uint256[](currentTokens.length);
         for (uint i = 0; i < currentTokens.length; i++) {
-            minAmountsOut[i] = bToken.getBalance(currentTokens[i]).mul(ratio).div(1e18).mul(995).div(1000); // 0.5% slippage;
+            minAmountsOut[i] = 1;
         }
 
         bToken.exitPool(amount, minAmountsOut);
@@ -373,11 +411,10 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
 
             uint256 exchangeTokenAmount = IERC20(currentTokens[i]).balanceOf(address(this));
 
-            this.swap(
+            super._swap(
                 IERC20(currentTokens[i]),
                 toToken,
                 exchangeTokenAmount,
-                0,
                 dist,
                 flags
             );
@@ -401,34 +438,33 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
         uint256 curFundAmount;
         for (uint i = 0; i < details.tokens.length; i++) {
             uint256 exchangeAmount = amount
-            .mul(details.tokens[i].denormalizedWeight)
-            .div(details.totalWeight);
+                .mul(details.tokens[i].denormalizedWeight)
+                .div(details.totalWeight);
 
             if (details.tokens[i].token != fromToken) {
-                uint256 tokenBalanceBefore = details.tokens[i].token.balanceOf(address(this));
-
                 for (uint j = 0; j < distribution.length; j++) {
                     dist[j] = (distribution[j] >> (i * 8)) & 0xFF;
                 }
 
-                this.swap(
+                super._swap(
                     fromToken,
                     details.tokens[i].token,
                     exchangeAmount,
-                    0,
                     dist,
                     flags
                 );
 
-                uint256 tokenBalanceAfter = details.tokens[i].token.balanceOf(address(this));
-
-                curFundAmount = (
-                tokenBalanceAfter.sub(tokenBalanceBefore)
-                ).mul(details.totalSupply).div(details.tokens[i].reserveBalance);
+                curFundAmount = _calcPoolOutAmount(
+                    details.tokens[i].token.balanceOf(address(this)),
+                    details.tokens[i].reserveBalance,
+                    details.totalSupply
+                );
             } else {
-                curFundAmount = (
-                exchangeAmount
-                ).mul(details.totalSupply).div(details.tokens[i].reserveBalance);
+                curFundAmount = _calcPoolOutAmount(
+                    exchangeAmount,
+                    details.tokens[i].reserveBalance,
+                    details.totalSupply
+                );
             }
 
             if (curFundAmount < minFundAmount) {
@@ -436,10 +472,9 @@ contract OneSplitBalancerPoolToken is OneSplitBaseWrap, OneSplitBalancerPoolToke
             }
 
             maxAmountsIn[i] = uint256(-1);
-            details.tokens[i].token.universalApprove(address(poolToken), uint256(-1));
+            details.tokens[i].token.universalApprove(address(poolToken), uint256(- 1));
         }
 
-        // todo: check for vulnerability
         IBPool(address(poolToken)).joinPool(minFundAmount, maxAmountsIn);
 
         // Return leftovers
