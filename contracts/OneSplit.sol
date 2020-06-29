@@ -139,8 +139,8 @@ contract OneSplitWrap is
     OneSplitWeth,
     OneSplitDMM,
     OneSplitMultiPath,
-    OneSplitCurvePoolTokenView,
-    OneSplitBalancerPoolTokenView
+    OneSplitCurvePoolToken,
+    OneSplitBalancerPoolToken
     //OneSplitSmartToken
 {
     IOneSplitView public oneSplitView;
